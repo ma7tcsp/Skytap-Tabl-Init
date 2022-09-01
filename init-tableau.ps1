@@ -23,10 +23,15 @@ write-host("          When complete, TSM will load in the browser and this windo
 write-host("          Sit back and make yourself a cuppa in the meantime                    ")
 write-host("          ======================================================================")
 write-host("")
-#Wait for windows TSM service to start running
-write-host("Waiting for TSM service to run")
 #Pause for 60 seconds to allow services to run from resume state
 Start-Sleep -Seconds 60
+#Wait for time synchronization
+write-host("Waiting for Date and Time Sync")
+$s2 = Get-Service 'Windows Time'
+$s2.WaitForStatus('Running')
+w32tm /resync /force
+#Wait for windows TSM service to start running
+write-host("Waiting for TSM service to run")
 $s1 = Get-Service 'Tableau Server Service Manager'
 $s1.WaitForStatus('Running')
 #Set Tls
